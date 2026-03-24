@@ -23,94 +23,91 @@
 //*****************************************************************************
 
 .global _start
-.text
+    .text                       // code section
 
 _start:
+
+// -------------------------------------------------------------
+// System Call Exit
+// -------------------------------------------------------------
+.EQU SYS_exit, 93				// Linux exit()
 
 main_loop:
 
     // -------------------------------------------------------------
     // Prompt user for binary number
     // -------------------------------------------------------------
-    LDR     X0, =prompt
-    BL      putstring
+    LDR     X0, =prompt         // Load address of prompt string
+    BL      putstring           // Output prompt to console
 
     // -------------------------------------------------------------
     // Read input string
     // -------------------------------------------------------------
-    LDR     X0, =input_buffer
-    MOV     X1, #64
-    BL      getstring
+    LDR     X0, =input_buffer   // Load address of prompt string
+    MOV     X1, #64             // Set the max buffer length
+    BL      getstring           // Read the string from keyboard
 
     // -------------------------------------------------------------
-    // Check if user entered Q or q to quit
+    // Validate the input and get valid binary string
+    //
+    // rg_validate returns: 
+    //     1 = valid input
+    //     2 = quit command
+    //     3 = clear command
+    // X1 = pointer to new binary string (valid)
+    // X2 = number of valid binary digits collected (length if new string)
     // -------------------------------------------------------------
-    LDR     X0, =input_buffer
-    LDRB    W1, [X0]
-
-    CMP     W1, #'Q'
-    B.EQ    program_exit
-
-    CMP     W1, #'q'
-    B.EQ    program_exit
-
+    LDR    X0, =input_buffer    // Load pointer to input buffer
+    BL     rg_validate          // Call validation function
+    
     // -------------------------------------------------------------
-    // Validate binary string
+    // Check if user entererd quit command
     // -------------------------------------------------------------
-    LDR     X0, =input_buffer
-    BL      rg_validate
-
-    CMP     X0, #0
-    B.EQ    invalid_input
-
+    CMP   X0, #2                // Is there a quit command?
+    B.EQ  program_exit          // If yes, exit program
+    
     // -------------------------------------------------------------
-    // Convert binary string ? integer value
+    // Check if user entered clear command
     // -------------------------------------------------------------
-    LDR     X1, =input_buffer
-    MOV     X2, #0          // result accumulator
-
-convert_loop:
-
-    LDRB    W3, [X1], #1
-    CMP     W3, #0
-    B.EQ    conversion_done
-
-    LSL     X2, X2, #1
-
-    CMP     W3, #'1'
-    B.NE    convert_loop
-
-    ADD     X2, X2, #1
-    B       convert_loop
-
-conversion_done:
-
-    MOV     X0, X2
-
+    CMP   X0, #3                // Is there a clear commmand?
+    B.EQ  main_loop             // Restart the main_loop
+    
     // -------------------------------------------------------------
-    // Determine sign of number
+    // Check if no valid binary digits were entered
     // -------------------------------------------------------------
-    BL      determine_sign
-
+    CMP   X2, #0                // Check number of valid digits
+    B.EQ  main_loop             // If no valid digits prompt again
+    
     // -------------------------------------------------------------
-    // Output the result
+    MOV   X0, X1                // Move the new binary string pointer to X0  
+    
     // -------------------------------------------------------------
-    BL      output_result
+    // Sign extend binary string to full 16 bits
+    // -------------------------------------------------------------
+    BL    rg_signExtend         // extened binary string to 16 bits
+    
+    // -------------------------------------------------------------
+    // Convert 16 bit binary string to signed decimal value
+    // -------------------------------------------------------------
+    BL    rg_convert            // Convert binary string to decmial
+    
+    // -------------------------------------------------------------
+    // Output the decimal result
+    // -------------------------------------------------------------
+    BL    output_result          // Print arrow and decmial value
+    
+    // -------------------------------------------------------------
+    // Prompt user for input again and start new input
+    // -------------------------------------------------------------
+    B   main_loop               // Repeat main program loop
 
-    B       main_loop
-
-
-invalid_input:
-
-    LDR     X0, =error_msg
-    BL      putstring
-    B       main_loop
-
-
+// -------------------------------------------------------------
+// Exit the program
+// -------------------------------------------------------------
 program_exit:
 
     MOV     X0, #0
-    MOV     X8, #93
+    MOV     X8, #SYS_exit
     SVC     0
 
 
@@ -118,12 +115,7 @@ program_exit:
 // Data Section
 // -------------------------------------------------------------
 .data
+// input prompt string
+prompt:        .asciz "Enter 16-bit binary number (Q to quit): "
 
-prompt:
-    .asciz "Enter 16-bit binary number (Q to quit): "
-
-error_msg:
-    .asciz "Invalid binary input.\n"
-
-input_buffer:
-    .skip   64
+input_buffer:  .skip   64       // buffer for user input string
