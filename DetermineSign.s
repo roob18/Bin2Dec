@@ -1,5 +1,5 @@
 // Matthew Clayton & Ruben Gonzalez
-// CS3B - Bin2Dec - DetermineSign
+// CS3B - Bin2Dec
 // 3/24/2026
 // Purpose: Determines whether the collected binary input represents a
 //          positive or negative 16-bit two's complement value and applies
