@@ -61,4 +61,4 @@ alr_ext:
 	RET					// Return original pointer unchanged
 	
 	.data				// data section
-extBuf:		skip  17	// 16 bits + null
+extBuf:		.skip  17	// 16 bits + null

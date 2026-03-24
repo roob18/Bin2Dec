@@ -43,7 +43,7 @@ skip_add:
 	CMP   X2, #16		// Have we gone through 16 bits?
 	B.LT  convert_loop	// Continue if not done
 	
-	MOV   W0, W1`		// Copy result
+	MOV   W0, W1		// Copy result
 	SXTH  X0, W0		// Sign extend 16-bit value
 	
 	RET					// Return to main program
