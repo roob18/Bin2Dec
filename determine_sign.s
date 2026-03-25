@@ -54,7 +54,7 @@ lblCheckUpperBound:
     CMP     X4, #16                     // compare bit count to 16
     B.LE    lblBuildCountMask           // if 16 or less, continue normally
 
-    MOV     X4, #16                     // clamp any larger count down to 16
+    MOV     X4, #16                     // reduce any larger count down to 16
 
 lblBuildCountMask:
     MOV     X5, #1                      // set X5 to 1
