@@ -69,9 +69,15 @@ main_loop:
     // -------------------------------------------------------------
     // Check if user entered clear command
     // -------------------------------------------------------------
-    CMP   X0, #3                // Is there a clear commmand?
-    B.EQ  main_loop             // Restart the main_loop
+    CMP   X0, #3                // Is there a clear command?
+    B.NE  check_empty           // If not clear, continue normally
     
+    LDR   X0, =clear_line       // Load carriage return string
+    BL    putstring             // Move cursor back to start of line
+    
+    B     main_loop             // Restart the main loop
+
+check_empty:
     // -------------------------------------------------------------
     // Check if no valid binary digits were entered
     // -------------------------------------------------------------
@@ -119,3 +125,5 @@ program_exit:
 prompt:        .asciz "Enter 16-bit binary number (Q to quit): "
 
 input_buffer:  .skip   64       // buffer for user input string
+
+clear_line:    .asciz "\r"
