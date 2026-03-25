@@ -1,4 +1,4 @@
-// Ruben Gonzalez
+// Matthew Clayton & Ruben Gonzalez
 // CS3B - Bin2Dec - rg_convert.s
 // 03/19/2025
 // Convert a 16-bit binary string to two's complement into signed decimal

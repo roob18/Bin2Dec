@@ -1,4 +1,4 @@
-// Ruben Gonzalez
+// Matthew Clayton & Ruben Gonzalez
 // CS3B - Bin2Dec - signExtend.s
 // 03/19/2025
 // Extend the binary string (after validate.s) to 16 bits using sign

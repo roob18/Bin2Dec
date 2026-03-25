@@ -1,4 +1,4 @@
-// Ruben Gonzalez
+// Matthew Clayton & Ruben Gonzalez
 // CS3B - Bin2Dec - validate.s
 // 03/19/2025
 // Validate the input string for valid characters. Scans the enitre
